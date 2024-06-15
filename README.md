@@ -1,7 +1,7 @@
 # Dicoding Dashboard Bikers
 
 ## Analysis with Jupyter Notebook
-
+https://colab.research.google.com/drive/1UgtKLNjB9QCv4sj5PuNkWyhVEi_EPlr9?usp=sharing
 
 ## Setup environment
 ```
@@ -19,5 +19,6 @@ pip install -r requirements.txt
 streamlit run dashboard.py
 ```
 ## Dashboard Result
+https://dicoding-submission-bike-hiring.streamlit.app/
 <p align="center">
   <img src="/image/dashboard_result.png" />
