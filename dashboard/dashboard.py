@@ -1,5 +1,7 @@
+import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 import streamlit as st
 import plotly.express as px
 from babel.numbers import format_currency
@@ -58,6 +60,32 @@ def create_hourly_bikers_df(df):
 
     return hourly_bikers_df 
 
+def create_avg_seasonly_bikers(df):
+    df_weekend = df[df['weekday_hour'].isin([6, 0])]
+    
+    df_summer = df_weekend[df_weekend['season_hour'] == 'musim panas']
+    df_winter = df_weekend[df_weekend['season_hour'] == 'musim dingin']
+    
+    summer_avg_bikers = df_summer.groupby('hr').agg({
+        'cnt_hour': 'mean'}).reset_index()
+    summer_avg_bikers.rename(columns={
+        'cnt_hour': 'avg_bikers', 
+        'hr': 'hour'
+    }, inplace=True)
+    summer_avg_bikers['season_hour'] = 'musim panas'
+    
+    winter_avg_bikers = df_winter.groupby('hr').agg({
+        'cnt_hour': 'mean'}).reset_index()
+    winter_avg_bikers.rename(columns={
+        'cnt_hour': 'avg_bikers', 
+        'hr': 'hour'
+    }, inplace=True)
+    winter_avg_bikers['season_hour'] = 'musim dingin'
+
+    avg_seasonly_bikers_df = pd.concat([summer_avg_bikers, winter_avg_bikers])
+
+    return avg_seasonly_bikers_df
+
 # Sidebar
 min_date = df["dteday"].min()
 max_date = df["dteday"].max()
@@ -81,6 +109,7 @@ main_df = df[
 monthly_bikers_df = create_monthly_bikers_df(main_df)
 seasonly_bikers_df = create_seasonly_bikers_df(main_df)
 hourly_bikers_df = create_hourly_bikers_df(main_df)
+avg_seasonly_bikers_df = create_avg_seasonly_bikers(main_df)
 
 # Header
 st.title("Dashboard Bike-Sharing")
@@ -125,3 +154,12 @@ fig3 = px.bar(hourly_bikers_df,
 left_column, right_column = st.columns(2)
 left_column.plotly_chart(fig2, use_container_width=True)
 right_column.plotly_chart(fig3, use_container_width=True)
+
+fig4 = px.line(avg_seasonly_bikers_df,
+              x='hour',
+              y='avg_bikers',
+              color='season_hour',
+              color_discrete_sequence=["orangered", "skyblue"],
+              markers=True,
+              title="Rata-rata Jumlah Pengendara per Jam pada Akhir Pekan di Musim Panas dan Musim Dingin").update_layout(xaxis_title='Jam', yaxis_title='Rata-rata Pengendara')
+st.plotly_chart(fig4, use_container_width=True)
