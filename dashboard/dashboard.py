@@ -62,7 +62,7 @@ def create_hourly_bikers_df(df):
 min_date = df["dteday"].min()
 max_date = df["dteday"].max()
 with st.sidebar:
-    st.image("bycycle.png")
+    st.image("https://raw.githubusercontent.com/georamajo/Dicoding-Submission-Bike-Hiring/main/image/bycycle.png")
     st.sidebar.title("Menu")
     start_date, end_date = st.date_input(
         label="Date Filter", min_value=min_date,
